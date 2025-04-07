@@ -9,20 +9,16 @@ using WindowsFormNotification.Models;
 
 namespace WindowsFormNotification
 {
-    public partial class NotificationForm : Form
+    public class NotificationAppContext : ApplicationContext
     {
         private HubConnection hubConnection;
         private IHubProxy hubProxy;
-        public NotificationForm()
+
+        public NotificationAppContext()
         {
-            InitializeComponent();
-            //this.Load += new EventHandler(NotificationForm_Load);
+            Task.Run(() => ConnectToSignalR()); // fire-and-forget
         }
 
-        private async void NotificationForm_Load(object sender, EventArgs e)
-        {
-            await ConnectToSignalR();
-        }
         private async Task ConnectToSignalR()
         {
             try
@@ -68,7 +64,7 @@ namespace WindowsFormNotification
             {
                 toast.SetProtocolActivation(new Uri(notification.OnclickUrl));
             }
-            
+
             if (IsValidUrl(notification.ImageUrl))
             {
                 string imageUrl = notification.ImageUrl;
@@ -77,9 +73,9 @@ namespace WindowsFormNotification
                 {
                     webClient.DownloadFile(imageUrl, tempImagePath);
                 }
-                toast.AddAppLogoOverride(new Uri(tempImagePath),ToastGenericAppLogoCrop.Circle)
-                    .AddInlineImage(new Uri(tempImagePath))
-                    .AddHeroImage(new Uri(tempImagePath));
+                toast.AddAppLogoOverride(new Uri(tempImagePath));
+                    //.AddInlineImage(new Uri(tempImagePath))
+                    //.AddHeroImage(new Uri(tempImagePath));
             }
 
             //.AddHeader("Notification Header", "InternalPortal", "MyAppID")
@@ -92,12 +88,6 @@ namespace WindowsFormNotification
             //.AddAppLogoOverride(new Uri(notification.ImageUrl), ToastGenericAppLogoCrop.Circle)
             //.AddInlineImage(new Uri(notification.ImageUrl))
             //.AddHeroImage(new Uri(notification.ImageUrl));
-
-            // Add image if available
-            //if (!string.IsNullOrEmpty(notificationModel.ImageUrl))
-            //{
-            //    toast.AddInlineImage(new Uri(notificationModel.ImageUrl));
-            //}
 
             #region Available System Sounds
             //"ms-winsoundevent:Notification.Default"
@@ -115,6 +105,6 @@ namespace WindowsFormNotification
             return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
                    && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
-    
+
     }
 }
