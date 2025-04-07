@@ -26,15 +26,13 @@ namespace WindowsFormNotification
             try
             {
                 // Log to check if the connection is working
-                System.IO.File.WriteAllText(@"C:\Logs\errors.txt", "Connecting to SignalR...");
+                System.IO.File.WriteAllText(@"C:\Logs\errorsForm.txt", "Connecting to SignalR...");
                 hubConnection = new HubConnection("http://localhost/");
-
-                //hubConnection = new HubConnection("https://realtimeapp/");
                 hubProxy = hubConnection.CreateHubProxy("notificationHub");
 
                 // Start the connection
                 await hubConnection.Start();
-                System.IO.File.WriteAllText(@"C:\Logs\notifications.txt", "hubConnection: " + hubConnection.State + Environment.NewLine);
+                System.IO.File.WriteAllText(@"C:\Logs\NotificationsForm.txt", "hubConnection: " + hubConnection.State + Environment.NewLine);
 
                 // Listening for new notifications from SignalR
                 hubProxy.On<NotificationModel>("newNotification", notification =>
@@ -43,18 +41,18 @@ namespace WindowsFormNotification
                     {
                         // Show a toast notification
                         ShowToastNotification("New Post", notification);
-                        System.IO.File.AppendAllText(@"C:\Logs\notifications.txt", $"New Notification: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
+                        System.IO.File.AppendAllText(@"C:\Logs\NotificationsForm.txt", $"New Notification: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
                     }
                     catch (Exception ex)
                     {
-                        System.IO.File.AppendAllText(@"C:\Logs\notifications.txt", $"Error Message: {ex.Message}" + Environment.NewLine);
-                        System.IO.File.AppendAllText(@"C:\Logs\notifications.txt", $"New Notification in catch: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
+                        System.IO.File.AppendAllText(@"C:\Logs\NotificationsForm.txt", $"Error Message: {ex.Message}" + Environment.NewLine);
+                        System.IO.File.AppendAllText(@"C:\Logs\NotificationsForm.txt", $"New Notification in catch: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
                     }
                 });
             }
             catch (Exception ex)
             {
-                System.IO.File.WriteAllText(@"C:\Logs\errors.txt", ex.InnerException.Message);
+                System.IO.File.WriteAllText(@"C:\Logs\errorsForm.txt", ex.InnerException.Message);
             }
         }
 

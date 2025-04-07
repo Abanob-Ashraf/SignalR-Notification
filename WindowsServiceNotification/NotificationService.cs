@@ -26,7 +26,7 @@ namespace WindowsServiceNotification
                 hubProxy = hubConnection.CreateHubProxy("notificationHub");
 
                 await hubConnection.Start();
-                System.IO.File.WriteAllText(@"C:\Logs\notifications.txt", "hubConnection:" + hubConnection.State + Environment.NewLine + "hubProxy:" + hubProxy.ToString() + Environment.NewLine);
+                System.IO.File.WriteAllText(@"C:\Logs\NotificationsService.txt", "hubConnection:" + hubConnection.State + Environment.NewLine + "hubProxy:" + hubProxy.ToString() + Environment.NewLine);
 
 
                 hubProxy.On<NotificationModel>("newNotification", notification =>
@@ -34,15 +34,15 @@ namespace WindowsServiceNotification
                     try
                     {
                         ShowToastNotification("New Post", notification);
-                        System.IO.File.AppendAllText(@"C:\Logs\notifications.txt", $"New Notification: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
+                        System.IO.File.AppendAllText(@"C:\Logs\NotificationsService.txt", $"New Notification: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
 
 
                     }
                     catch (Exception ex)
                     {
-                        System.IO.File.AppendAllText(@"C:\Logs\notifications.txt", $"Error Message: {ex.Message}" + Environment.NewLine);
+                        System.IO.File.AppendAllText(@"C:\Logs\NotificationsService.txt", $"Error Message: {ex.Message}" + Environment.NewLine);
 
-                        System.IO.File.AppendAllText(@"C:\Logs\notifications.txt", $"New Notification in catch: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
+                        System.IO.File.AppendAllText(@"C:\Logs\NotificationsService.txt", $"New Notification in catch: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
 
                     }
                     // Log or show notifications
@@ -52,7 +52,7 @@ namespace WindowsServiceNotification
             }
             catch (Exception ex)
             {
-                System.IO.File.WriteAllText(@"C:\Logs\errors.txt", ex.InnerException.Message);
+                System.IO.File.WriteAllText(@"C:\Logs\errorsService.txt", ex.InnerException.Message);
             }
         }
 
