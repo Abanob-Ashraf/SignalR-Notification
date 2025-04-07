@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "G:\\Projects\\SignalR-Notification\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C73907F6-5D62-4DD7-ACFF-D67C0A437643}|Solution Items{C73907F6-5D62-4DD7-ACFF-D67C0A437643}|G:\\Projects\\SignalR-Notification\\gitignore.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{C73907F6-5D62-4DD7-ACFF-D67C0A437643}|Solution Items{C73907F6-5D62-4DD7-ACFF-D67C0A437643}|solutionrelative:gitignore.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "gitignore.txt",
+              "DocumentMoniker": "G:\\Projects\\SignalR-Notification\\gitignore.txt",
+              "RelativeDocumentMoniker": "gitignore.txt",
+              "ToolTip": "G:\\Projects\\SignalR-Notification\\gitignore.txt",
+              "RelativeToolTip": "gitignore.txt",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABkAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-04-07T10:57:55.666Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
