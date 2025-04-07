@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Net;
@@ -17,6 +18,8 @@ namespace WindowsFormNotification
         public NotificationAppContext()
         {
             Task.Run(() => ConnectToSignalR()); // fire-and-forget
+            AddApplicationToStartup();
+
         }
 
         private async Task ConnectToSignalR()
@@ -71,11 +74,13 @@ namespace WindowsFormNotification
                 string tempImagePath = Path.Combine(Path.GetTempPath(), "toast_image.jpg");
                 using (var webClient = new WebClient())
                 {
+                    webClient.Credentials = CredentialCache.DefaultNetworkCredentials;
+                    webClient.Headers.Add("Authorization", "NTLM");
                     webClient.DownloadFile(imageUrl, tempImagePath);
                 }
                 toast.AddAppLogoOverride(new Uri(tempImagePath));
-                    //.AddInlineImage(new Uri(tempImagePath))
-                    //.AddHeroImage(new Uri(tempImagePath));
+                //.AddInlineImage(new Uri(tempImagePath))
+                //.AddHeroImage(new Uri(tempImagePath));
             }
 
             //.AddHeader("Notification Header", "InternalPortal", "MyAppID")
@@ -106,5 +111,17 @@ namespace WindowsFormNotification
                    && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
 
+        public static void AddApplicationToStartup()
+        {
+            string appName = "MyNotificationApp"; // Choose any name
+            string exePath = Application.ExecutablePath;
+
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+            if (key.GetValue(appName) == null)
+            {
+                key.SetValue(appName, $"\"{exePath}\"");
+            }
+        }
     }
 }
