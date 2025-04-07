@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
+using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,28 +20,22 @@ namespace WindowsFormNotification
 
         private async void NotificationForm_Load(object sender, EventArgs e)
         {
-            // Automatically connect to SignalR when the form is loaded
             await ConnectToSignalR();
         }
         private async Task ConnectToSignalR()
         {
             try
             {
-                // Log to check if the connection is working
-                System.IO.File.WriteAllText(@"C:\Logs\errorsForm.txt", "Connecting to SignalR...");
                 hubConnection = new HubConnection("http://localhost/");
                 hubProxy = hubConnection.CreateHubProxy("notificationHub");
 
-                // Start the connection
                 await hubConnection.Start();
                 System.IO.File.WriteAllText(@"C:\Logs\NotificationsForm.txt", "hubConnection: " + hubConnection.State + Environment.NewLine);
 
-                // Listening for new notifications from SignalR
                 hubProxy.On<NotificationModel>("newNotification", notification =>
                 {
                     try
                     {
-                        // Show a toast notification
                         ShowToastNotification("New Post", notification);
                         System.IO.File.AppendAllText(@"C:\Logs\NotificationsForm.txt", $"New Notification: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
                     }
@@ -58,30 +54,41 @@ namespace WindowsFormNotification
 
         private void ShowToastNotification(string title, NotificationModel notification)
         {
-            //// Create and configure the toast notification
-            //var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
-            //var toastTextElements = toastXml.GetElementsByTagName("text");
-            //var toastImageElements = toastXml.GetElementsByTagName("image");
-
-            //// Set the toast message
-            //toastTextElements.Item(0).AppendChild(toastXml.CreateTextNode(title));
-            //toastTextElements.Item(1).AppendChild(toastXml.CreateTextNode(notification.Message));
-
-            //// Set the image URL if present
-            //if (!string.IsNullOrEmpty(notification.ImageUrl))
-            //{
-            //    toastImageElements.Item(0).Attributes[1].NodeValue = notification.ImageUrl;
-            //}
-
-            //var toast = new ToastNotification(toastXml);
-            //ToastNotificationManager.CreateToastNotifier().Show(toast);
             var toast = new ToastContentBuilder()
-                .AddArgument("action", "viewConversation")
-                .AddArgument("conversationId", 9813)
-               .AddText(title)
-               .AddText(notification.Message)
-               .AddHeader("Notification Header", "InternalPortal", "MyAppID")
-               .AddAppLogoOverride(new Uri(notification.ImageUrl), ToastGenericAppLogoCrop.Circle);
+                .AddText(title)
+                .AddText(notification.Message)
+                .AddAudio(new ToastAudio
+                {
+                    Src = new Uri("ms-winsoundevent:Notification.IM"),
+                    Loop = false
+                });
+
+            if (IsValidUrl(notification.OnclickUrl))
+            {
+                toast.SetProtocolActivation(new Uri(notification.OnclickUrl));
+            }
+            
+            if (IsValidUrl(notification.ImageUrl))
+            {
+                string imageUrl = notification.ImageUrl;
+                string tempImagePath = Path.Combine(Path.GetTempPath(), "toast_image.jpg");
+                using (var webClient = new WebClient())
+                {
+                    webClient.DownloadFile(imageUrl, tempImagePath);
+                }
+                toast.AddAppLogoOverride(new Uri(tempImagePath),ToastGenericAppLogoCrop.Circle)
+                    .AddInlineImage(new Uri(tempImagePath))
+                    .AddHeroImage(new Uri(tempImagePath));
+            }
+
+            //.AddHeader("Notification Header", "InternalPortal", "MyAppID")
+            //.AddButton(new ToastButton()
+            //    .SetContent("Open Interna Portal")
+            //    .SetProtocolActivation(new Uri(notification.OnclickUrl))
+            //    )
+
+
+            //.AddAppLogoOverride(new Uri(notification.ImageUrl), ToastGenericAppLogoCrop.Circle)
             //.AddInlineImage(new Uri(notification.ImageUrl))
             //.AddHeroImage(new Uri(notification.ImageUrl));
 
@@ -90,16 +97,23 @@ namespace WindowsFormNotification
             //{
             //    toast.AddInlineImage(new Uri(notificationModel.ImageUrl));
             //}
+
+            #region Available System Sounds
+            //"ms-winsoundevent:Notification.Default"
+            //"ms-winsoundevent:Notification.IM"
+            //"ms-winsoundevent:Notification.Mail"
+            //"ms-winsoundevent:Notification.Reminder"
+            //"ms-winsoundevent:Notification.SMS"
+            #endregion
+
             toast.Show();
-
-
-
-
-
         }
 
-
-
+        bool IsValidUrl(string url)
+        {
+            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
+                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        }
     }
     public class NotificationModel
     {

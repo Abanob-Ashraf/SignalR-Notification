@@ -35,20 +35,13 @@ namespace WindowsServiceNotification
                     {
                         ShowToastNotification("New Post", notification);
                         System.IO.File.AppendAllText(@"C:\Logs\NotificationsService.txt", $"New Notification: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
-
-
                     }
                     catch (Exception ex)
                     {
                         System.IO.File.AppendAllText(@"C:\Logs\NotificationsService.txt", $"Error Message: {ex.Message}" + Environment.NewLine);
-
                         System.IO.File.AppendAllText(@"C:\Logs\NotificationsService.txt", $"New Notification in catch: {notification.Message} - {notification.OnclickUrl} - {notification.ImageUrl}" + Environment.NewLine);
-
                     }
-                    // Log or show notifications
                 });
-
-
             }
             catch (Exception ex)
             {
@@ -124,8 +117,6 @@ namespace WindowsServiceNotification
 
 
     }
-
-
 
     public class NotificationModel
     {
